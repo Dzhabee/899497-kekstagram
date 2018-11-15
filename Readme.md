@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм» [![Build status][travis-image]][travis-url]
 
 * Студент: [Илья Герасименко](https://up.htmlacademy.ru/javascript/16/user/899497).
-* Наставник: `Неизвестно`.
+* Наставник: `Максим Лыков`.
 
 ---
 
