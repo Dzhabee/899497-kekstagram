@@ -89,40 +89,94 @@ var renderUserPictures = function (pictures) {
 renderUserPictures(getUserTamplate());
 
 // Задание 4
-document.querySelector('.big-picture').classList.remove('hidden');
+var bigPicture = document.querySelector('.big-picture');
+var closeBigEmg = document.querySelector('.big-picture__cancel');
 
-var firstUserValue = getUserTamplate()[0];
-var blockImg = document.querySelector('.big-picture__img');
-blockImg.querySelector('img').src = firstUserValue.url;
-document.querySelector('.likes-count').textContent = firstUserValue.likes;
-document.querySelector('.comments-count').textContent = firstUserValue.comments.length;
-document.querySelector('.social__caption').textContent = firstUserValue.description;
+pictureBlock.addEventListener('click', function () {
+  bigPicture.classList.remove('hidden');
 
-// добавление комментарий к открытой фотографии
-var createComment = function () {
-  var socialComment = document.querySelector('.social__comments');
-  var fragment = document.createDocumentFragment();
-  var count = firstUserValue.comments.length;
+  var firstUserValue = getUserTamplate()[0];
+  var blockImg = document.querySelector('.big-picture__img');
+  blockImg.querySelector('img').src = firstUserValue.url;
+  document.querySelector('.likes-count').textContent = firstUserValue.likes;
+  document.querySelector('.comments-count').textContent = firstUserValue.comments.length;
+  document.querySelector('.social__caption').textContent = firstUserValue.description;
 
-  for (var i = 0; i < count; i++) {
-    var rndComment = document.createElement('li');
-    rndComment.classList.add('social__comment');
-    fragment.appendChild(rndComment); // Вопрос? Если я элемент li добавил во фрагмент, то потом когда я добавляю текст и изображение к тегу li то они также добавляются во фрагмент?
-    var rndCommentImg = document.createElement('img');
-    rndCommentImg.classList.add('social__picture');
-    rndCommentImg.src = 'img/avatar-' + getRndInteger(MIN_COMMENT_AVA, MAX_COMMENT_AVA) + '.svg';
-    rndCommentImg.alt = 'Аватар комментатора фотографии';
-    rndComment.appendChild(rndCommentImg); // Вот это добавляется во фрагмент
-    var rndCommentDsp = document.createElement('p');
-    rndCommentDsp.classList.add('social__text');
-    rndCommentDsp.textContent = firstUserValue.comments[i];
-    rndComment.appendChild(rndCommentDsp); // Вот это добавляется во фрагмент
-  }
-  return socialComment.appendChild(fragment);
-};
+  // добавление комментарий к открытой фотографии
+  var createComment = function () {
+    var socialComment = document.querySelector('.social__comments');
+    var fragment = document.createDocumentFragment();
+    var count = firstUserValue.comments.length;
 
-createComment();
+    for (var i = 0; i < count; i++) {
+      var rndComment = document.createElement('li');
+      rndComment.classList.add('social__comment');
+      fragment.appendChild(rndComment); // Вопрос? Если я элемент li добавил во фрагмент, то потом когда я добавляю текст и изображение к тегу li то они также добавляются во фрагмент?
+      var rndCommentImg = document.createElement('img');
+      rndCommentImg.classList.add('social__picture');
+      rndCommentImg.src = 'img/avatar-' + getRndInteger(MIN_COMMENT_AVA, MAX_COMMENT_AVA) + '.svg';
+      rndCommentImg.alt = 'Аватар комментатора фотографии';
+      rndComment.appendChild(rndCommentImg); // Вот это добавляется во фрагмент
+      var rndCommentDsp = document.createElement('p');
+      rndCommentDsp.classList.add('social__text');
+      rndCommentDsp.textContent = firstUserValue.comments[i];
+      rndComment.appendChild(rndCommentDsp); // Вот это добавляется во фрагмент
+    }
+    return socialComment.appendChild(fragment);
+  };
+
+  createComment();
+});
+
+closeBigEmg.addEventListener('click', function () {
+  bigPicture.classList.add('hidden');
+});
+
 
 // Задание 5
 document.querySelector('.social__comment-count').classList.add('.social__comment-count', 'visually-hidden');
 document.querySelector('.comments-loader').classList.add('.comments-loader', 'visually-hidden');
+
+
+// Новая домашка
+var uploFile = document.querySelector('#upload-file');
+var editEmg = document.querySelector('.img-upload__overlay');
+var closeEmg = editEmg.querySelector('.img-upload__cancel');
+
+uploFile.addEventListener('change', function () {
+  editEmg.classList.remove('hidden');
+});
+
+closeEmg.addEventListener('click', function () {
+  editEmg.classList.add('hidden');
+});
+
+closeEmg.addEventListener('click', function () {
+  editEmg.classList.add('hidden');
+});
+
+
+var sliderElem = document.querySelector('.effect-level__line');
+var thumbElem = sliderElem.querySelector('.effect-level__pin');
+var depthElem = sliderElem.querySelector('.effect-level__depth');
+
+thumbElem.addEventListener('mousedown', function (evt) {
+  evt.preventDefault();
+  var startCoords = evt.clientX;
+  var onMouseMove = function (moveEvt) {
+    moveEvt.preventDefault();
+    var shift = startCoords - moveEvt.clientX;
+    startCoords = moveEvt.clientX;
+    // Не понимаю как условие поставить чтобы пин не вываливался за div effect-level__depth. Дописываю еще условие И startCoords < depthElem.getBoundingClientRect().right, но оно не канает
+    if (startCoords > depthElem.getBoundingClientRect().left) {
+      thumbElem.style.left = (thumbElem.offsetLeft - shift) + 'px';
+    }
+  };
+  var onMouseUp = function (upEvt) {
+    upEvt.preventDefault();
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+  };
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseup', onMouseUp);
+});
